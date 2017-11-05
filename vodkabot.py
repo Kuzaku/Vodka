@@ -219,7 +219,7 @@ def SEND_MESSAGE(op):
                 if msg.text == "gift":
                     sendMessage(msg.to, text="gift sent", contentMetadata=None, contentType=9)
                 if msg.text in ["Summon"]:
-			    group = cl.getGroup(msg.to)
+			    group = client.getGroup(msg.to)
 			    nama = [contact.mid for contact in group.members]
 			    cb = ""
 			    cb2 = "" 
