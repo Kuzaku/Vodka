@@ -218,8 +218,29 @@ def SEND_MESSAGE(op):
                     sendMessage(msg.to, "Current time is" + datetime.datetime.today().strftime('%Y年%m月%d日 %H:%M:%S') + "is")
                 if msg.text == "gift":
                     sendMessage(msg.to, text="gift sent", contentMetadata=None, contentType=9)
+                if msg.text in ["Summon"]:
+			    group = cl.getGroup(msg.to)
+			    nama = [contact.mid for contact in group.members]
+			    cb = ""
+			    cb2 = "" 
+			    strt = int(0)
+			    akh = int(0)
+			    for md in nama:
+			        akh = akh + int(6)
+			        cb += """{"S":"""+json.dumps(str(strt))+""","E":"""+json.dumps(str(akh))+""","M":"""+json.dumps(md)+"},"""
+			        strt = strt + int(7)
+			        akh = akh + 1
+			        cb2 += "@nrik \n"
+			    cb = (cb[:int(len(cb)-1)])
+			    msg.contentType = 0
+			    msg.text = cb2
+			    msg.contentMetadata ={'MENTION':'{"MENTIONEES":['+cb+']}','EMTVER':'4'}
+			    try:
+			        kc.sendMessage(msg)
+			    except Exception as error:
+			        print error
                 if msg.text == "set":
-                    sendMessage(msg.to, "I have set a read point ♪\n「tes」I will show you who I have read ♪")
+                    sendMessage(msg.to, "Set point")
                     try:
                         del wait['readPoint'][msg.to]
                         del wait['readMember'][msg.to]
@@ -240,9 +261,9 @@ def SEND_MESSAGE(op):
                                 print rom
                                 chiya += rom[1] + "\n"
 
-                        sendMessage(msg.to, "People who readed %s\nthat's it\n\nPeople who have ignored reads\n%sIt is abnormal ♪\n\nReading point creation date n time:\n[%s]"  % (wait['readMember'][msg.to],chiya,setTime[msg.to]))
+                        sendMessage(msg.to, "Yg baca: %s\nthat's it\n\nYg sombong: \n%HmHm ♪\n\nReading point creation date n time:\n[%s]"  % (wait['readMember'][msg.to],chiya,setTime[msg.to]))
                     else:
-                        sendMessage(msg.to, "An already read point has not been set.\n「set」you can send ♪ read point will be created ♪")
+                        sendMessage(msg.to, "Set dulu bego")
                 else:
                     pass
         else:
