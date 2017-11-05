@@ -239,7 +239,7 @@ def SEND_MESSAGE(op):
 			        kc.sendMessage(msg)
 			    except Exception as error:
 			        print error
-                if msg.text == "set":
+                if msg.text == "sett":
                     sendMessage(msg.to, "Set point")
                     try:
                         del wait['readPoint'][msg.to]
