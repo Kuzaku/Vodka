@@ -236,7 +236,7 @@ def SEND_MESSAGE(op):
 			    msg.text = cb2
 			    msg.contentMetadata ={'MENTION':'{"MENTIONEES":['+cb+']}','EMTVER':'4'}
 			    try:
-			        kc.sendMessage(msg)
+			        client.sendMessage(msg)
 			    except Exception as error:
 			        print error
                 if msg.text == "sett":
