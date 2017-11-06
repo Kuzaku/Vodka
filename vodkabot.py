@@ -282,7 +282,7 @@ def SEND_MESSAGE(op):
                 if msg.text == "gift":
                     sendMessage(msg.to, text="gift sent", contentMetadata=None, contentType=9)
 		#------------------------------------------------------
-               elif "Steal dp @" in msg.text:            
+                if msg.text == "Steal dp @":
                    print "[Command]dp executing"
                    _name = msg.text.replace("Steal dp @","")
                    _nametarget = _name.rstrip('  ')
