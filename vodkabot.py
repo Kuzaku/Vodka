@@ -118,6 +118,69 @@ def RECEIVE_MESSAGE(op):
 
 tracer.addOpInterrupt(26, RECEIVE_MESSAGE)
 
+def sendImage(self, to_, path):
+      M = Message(to=to_, text=None, contentType = 1)
+      M.contentMetadata = None
+      M.contentPreview = None
+      M2 = self._client.sendMessage(0,M)
+      M_id = M2.id
+      files = {
+         'file': open(path, 'rb'),
+      }
+      params = {
+         'name': 'media',
+         'oid': M_id,
+         'size': len(open(path, 'rb').read()),
+         'type': 'image',
+         'ver': '1.0',
+      }
+      data = {
+         'params': json.dumps(params)
+      }
+      r = self.post_content('https://obs-sg.line-apps.com/talk/m/upload.nhn', data=data, files=files)
+      if r.status_code != 201:
+         raise Exception('Upload image failure.')
+      return True
+
+def sendImage2(self, to_, path):
+      M = Message(to=to_,contentType = 1)
+      M.contentMetadata = None
+      M.contentPreview = None
+      M_id = self._client.sendMessage(M).id
+      files = {
+         'file': open(path, 'rb'),
+      }
+      params = {
+         'name': 'media',
+         'oid': M_id,
+         'size': len(open(path, 'rb').read()),
+         'type': 'image',
+         'ver': '1.0',
+      }
+      data = {
+         'params': json.dumps(params)
+      }
+      r = self._client.post_content('https://os.line.naver.jp/talk/m/upload.nhn', data=data, files=files)
+      if r.status_code != 201:
+         raise Exception('Upload image failure.')
+      return True
+
+def sendImageWithURL(self, to_, url):
+      path = '%s/pythonLine-%i.data' % (tempfile.gettempdir(), randint(0, 9))
+      r = requests.get(url, stream=True)
+      if r.status_code == 200:
+         with open(path, 'w') as f:
+            shutil.copyfileobj(r.raw, f)
+      else:
+         raise Exception('Download image failure.')
+      try:
+         self.sendImage(to_, path)
+      except:
+         try:
+            self.sendImage(to_, path)
+         except Exception as e:
+            raise e
+
 def SEND_MESSAGE(op):
     msg = op.message
     try:
@@ -218,6 +281,28 @@ def SEND_MESSAGE(op):
                     sendMessage(msg.to, "Current time is" + datetime.datetime.today().strftime('%Y年%m月%d日 %H:%M:%S') + "is")
                 if msg.text == "gift":
                     sendMessage(msg.to, text="gift sent", contentMetadata=None, contentType=9)
+		#------------------------------------------------------
+               elif "Steal dp @" in msg.text:            
+                   print "[Command]dp executing"
+                   _name = msg.text.replace("Steal dp @","")
+                   _nametarget = _name.rstrip('  ')
+                   gs = cl.getGroup(msg.to)
+                   targets = []
+                   for g in gs.members:
+                       if _nametarget == g.displayName:
+                           targets.append(g.mid)
+                   if targets == []:
+                       ki.sendText(msg.to,"Contact not found")
+                   else:
+                       for target in targets:
+                           try:
+                               contact = cl.getContact(target)
+                               path = "http://dl.profile.line-cdn.net/" + contact.pictureStatus
+                               cl.sendImageWithURL(msg.to, path)
+                           except:
+                               pass
+                   print "[Command]dp executed"
+#-----------------------------------------------------------
                 if msg.text in ["Summon"]:
 			    group = client.getGroup(msg.to)
 			    nama = [contact.mid for contact in group.members]
